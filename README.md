@@ -9,14 +9,17 @@ Setup Nvidia Jetson AGX Orin:
 `sudo apt install python3-pip`, 
 `sudo pip3 install jetson-stats`
 
-4, Install OpenCV with Cuda: download the shell script from this repo, 
+4, Install Jetpack:
+`sudo apt install nvidia-jetpack` 
+
+5, Install OpenCV with Cuda: download the shell script from this repo, 
 `chmod +x install_OpenCV_4.10.0_with_cuda_on_Jetpack_6.sh`, 
 `sudo ./install_OpenCV_4.10.0_with_cuda_on_Jetpack_6.sh`
 
-5, Install TensorRT: 
+6, Install TensorRT: 
 `sudo apt-get install tensorrt nvidia-tensorrt-dev python3-libnvinfer-dev`
 
-6, Install PyTorch:
+7, Install PyTorch:
 https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048
 
 p.s. *Do not use U.S. apt mirror
