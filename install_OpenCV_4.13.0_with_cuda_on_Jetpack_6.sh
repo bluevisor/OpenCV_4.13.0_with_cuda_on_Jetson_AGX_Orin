@@ -8,12 +8,14 @@
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA Corporation is strictly prohibited.
 #
-# Modified from this script: https://github.com/AastaNV/JEP/blob/master/script/install_opencv4.6.0_Jetson.sh
+# Modified from this script: https://github.com/AastaNV/JEP/blob/master/script/install_opencv4.6.0_Jetpack5.sh
 
 version="4.13.0"
 folder="workspace"
 
 set -e
+
+start_time=$(date +%s)
 
 # Fail fast if a prior 'sudo ./install...' left a root-owned workspace/ behind.
 if [ -e "$folder" ] && [ ! -w "$folder" ]; then
@@ -152,8 +154,13 @@ grep -qxF "$ld_line" "$rc_file" || echo "$ld_line" >> "$rc_file"
 grep -qxF "$py_line" "$rc_file" || echo "$py_line" >> "$rc_file"
 
 
+elapsed=$(( $(date +%s) - start_time ))
+printf -v elapsed_hms '%dh %02dm %02ds' \
+    $((elapsed/3600)) $(((elapsed%3600)/60)) $((elapsed%60))
+
 echo "** Install opencv "${version}" successfully"
 echo "** Detected shell: $shell_name -> wrote env vars to $rc_file"
 echo "** Open a new shell or run '$reload_cmd' to pick them up."
 echo "** Verify with: python3 -c 'import cv2; print(cv2.__version__, cv2.cuda.getCudaEnabledDeviceCount())'"
+echo "** Total time: $elapsed_hms"
 echo "** Bye :)"

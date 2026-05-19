@@ -181,4 +181,4 @@ Open a new shell or `source` that file after install.
 
 ---
 
-_Based on [`AastaNV/JEP/install_opencv4.6.0_Jetson.sh`](https://github.com/AastaNV/JEP/blob/master/script/install_opencv4.6.0_Jetson.sh)._
+_Based on [`AastaNV/JEP/install_opencv4.6.0_Jetpack5.sh`](https://github.com/AastaNV/JEP/blob/master/script/install_opencv4.6.0_Jetpack5.sh)._
