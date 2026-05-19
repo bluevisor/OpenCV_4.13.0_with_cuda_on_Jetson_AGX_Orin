@@ -1,5 +1,7 @@
 Setup Nvidia Jetson AGX Orin (JetPack 6.x / L4T R36):
 
+_Last updated: 2026-05-18_
+
 Prerequisites: ~12 GB free disk + swap on the target. Build takes ~2-3 h on AGX Orin with `make -j$(nproc)`.
 
 1, Install JetPack 6 using NVIDIA's SDK Manager from an x86 Ubuntu 20.04 or 22.04 host. To enter Force Recovery on the AGX Orin Devkit: hold the **Force Recovery** button, tap **Reset**, then release Force Recovery. Connect via USB-C.
