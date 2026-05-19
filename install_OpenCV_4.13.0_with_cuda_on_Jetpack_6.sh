@@ -52,6 +52,7 @@ sudo apt-get install -y libtbb-dev libjpeg-dev libpng-dev libtiff-dev
 sudo apt-get install -y libv4l-dev v4l-utils qv4l2
 sudo apt-get install -y libopenblas-dev liblapacke-dev   # BLAS + LAPACK(E) for cv::gemm fast path
 sudo apt-get install -y libeigen3-dev                    # enables alphamat, rgbd posegraph, parts of sfm
+sudo apt-get install -y libvtk9-dev                      # enables the viz module (3D visualization)
 sudo apt-get install -y curl
 
 
