@@ -1,34 +1,134 @@
-Setup Nvidia Jetson AGX Orin (JetPack 6.x / L4T R36):
+# OpenCV 4.13.0 with CUDA on Jetson AGX Orin
 
-_Last updated: 2026-05-18_
+Build script and setup notes for installing **OpenCV 4.13.0** with CUDA, cuDNN, GStreamer, and the contrib modules on **NVIDIA Jetson AGX Orin** running **JetPack 6.x** (L4T R36 / Ubuntu 22.04).
 
-Prerequisites: ~12 GB free disk + swap on the target. Build takes ~2-3 h on AGX Orin with `make -j$(nproc)`.
+> _Last updated: 2026-05-18_
 
-1, Install JetPack 6 using NVIDIA's SDK Manager from an x86 Ubuntu 20.04 or 22.04 host. To enter Force Recovery on the AGX Orin Devkit: hold the **Force Recovery** button, tap **Reset**, then release Force Recovery. Connect via USB-C.
+---
 
-2, Ensure JetPack components (CUDA, cuDNN, TensorRT, etc.) are installed — SDK Manager normally does this, but if you only flashed the base L4T image, run:
-`sudo apt update && sudo apt install -y nvidia-jetpack`
+## Requirements
 
-3, Set max performance:
-`sudo nvpmodel -m 0` (MAXN; on JetPack 6.2 the AGX Orin also exposes MAXN_SUPER),
-`sudo jetson_clocks`
+| Component | Version |
+|-----------|---------|
+| Hardware  | Jetson AGX Orin Devkit (other Orin variants supported — see [Notes](#notes)) |
+| OS        | JetPack 6.x (L4T R36, Ubuntu 22.04) |
+| CUDA      | 12.6 (bundled with JetPack 6.2) |
+| cuDNN     | 9.x |
+| Python    | 3.10 |
+| Disk      | ~12 GB free + swap |
+| Build time | ~2–3 h with `make -j$(nproc)` on AGX Orin |
 
-4, Install jtop (Ubuntu 22.04 uses PEP 668, so `--break-system-packages` is required):
-`sudo apt update`,
-`sudo apt install -y python3-pip`,
-`sudo pip3 install -U jetson-stats --break-system-packages`
+---
 
-5, Install OpenCV with CUDA: clone this repo, then
-`chmod +x install_OpenCV_4.13.0_with_cuda_on_Jetpack_6.sh`,
-`./install_OpenCV_4.13.0_with_cuda_on_Jetpack_6.sh`
-(the script uses `sudo` internally — do not run the whole script with sudo or `~/.bashrc` will be modified for root).
+## Setup
 
-6, Verify the install:
-`python3 -c "import cv2; print(cv2.__version__, cv2.cuda.getCudaEnabledDeviceCount())"`
-Expected: `4.13.0 1`
+### 1. Flash JetPack 6
 
-7, TensorRT: ships pre-installed with JetPack 6. For the Python/dev bindings:
-`sudo apt-get install -y python3-libnvinfer-dev`
+Install JetPack 6 using [NVIDIA SDK Manager](https://developer.nvidia.com/sdk-manager) from an **x86 Ubuntu 20.04 or 22.04** host.
 
-8, Install PyTorch — use the NVIDIA Jetson AI Lab pip index (preferred over PyPI extra-index, which serves broken SBSA wheels):
-see https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048 or the JetPack-AI-Lab index documented at https://pypi.jetson-ai-lab.io/
+To enter **Force Recovery** mode on the AGX Orin Devkit:
+
+1. Hold the **Force Recovery** button
+2. Tap **Reset**
+3. Release **Force Recovery**
+
+Connect the device to the host via USB-C.
+
+---
+
+### 2. Ensure JetPack components are installed
+
+SDK Manager normally installs CUDA, cuDNN, TensorRT, etc. If you only flashed the base L4T image, install the meta-package:
+
+```bash
+sudo apt update && sudo apt install -y nvidia-jetpack
+```
+
+---
+
+### 3. Set max performance
+
+```bash
+sudo nvpmodel -m 0      # MAXN (MAXN_SUPER also available on JetPack 6.2)
+sudo jetson_clocks
+```
+
+---
+
+### 4. Install `jtop`
+
+Ubuntu 22.04 enforces PEP 668, so `--break-system-packages` is required:
+
+```bash
+sudo apt update
+sudo apt install -y python3-pip
+sudo pip3 install -U jetson-stats --break-system-packages
+```
+
+Launch with `jtop`.
+
+---
+
+### 5. Build OpenCV with CUDA
+
+```bash
+git clone https://github.com/bluevisor/OpenCV_4.13.0_with_cuda_on_Jetson_AGX_Orin.git
+cd OpenCV_4.13.0_with_cuda_on_Jetson_AGX_Orin
+chmod +x install_OpenCV_4.13.0_with_cuda_on_Jetpack_6.sh
+./install_OpenCV_4.13.0_with_cuda_on_Jetpack_6.sh
+```
+
+> **Note:** Do not run the whole script with `sudo`. The script invokes `sudo` only where needed; running everything as root would write `LD_LIBRARY_PATH` / `PYTHONPATH` into root's `~/.bashrc` instead of yours.
+
+---
+
+### 6. Verify the install
+
+```bash
+python3 -c "import cv2; print(cv2.__version__, cv2.cuda.getCudaEnabledDeviceCount())"
+```
+
+Expected output:
+
+```
+4.13.0 1
+```
+
+---
+
+### 7. TensorRT _(optional)_
+
+TensorRT 10 ships pre-installed with JetPack 6. For Python and dev headers:
+
+```bash
+sudo apt-get install -y python3-libnvinfer-dev
+```
+
+---
+
+### 8. PyTorch _(optional)_
+
+Use the [NVIDIA Jetson AI Lab pip index](https://pypi.jetson-ai-lab.io/) — PyPI's extra-index serves broken SBSA wheels on Jetson.
+
+See also the [PyTorch for Jetson forum thread](https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048).
+
+---
+
+## Notes
+
+**Other Jetson modules.** Edit `CUDA_ARCH_BIN` in the script:
+
+| Module | `CUDA_ARCH_BIN` |
+|--------|-----------------|
+| AGX Orin / Orin NX / Orin Nano | `8.7` |
+| Xavier / Xavier NX             | `7.2` |
+| TX2                            | `6.2` |
+| Nano                           | `5.3` |
+
+**Environment.** The script appends `LD_LIBRARY_PATH` and `PYTHONPATH` to `~/.bashrc` (guarded against duplicates). Open a new shell or `source ~/.bashrc` after install.
+
+**Disabling DNN-on-GPU.** Remove `-D OPENCV_DNN_CUDA=ON` from the script's `cmake` invocation if you don't need the CUDA DNN backend (slightly faster build).
+
+---
+
+_Based on [`AastaNV/JEP/install_opencv4.6.0_Jetson.sh`](https://github.com/AastaNV/JEP/blob/master/script/install_opencv4.6.0_Jetson.sh)._
