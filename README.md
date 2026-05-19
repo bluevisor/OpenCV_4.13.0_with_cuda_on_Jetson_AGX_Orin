@@ -2,7 +2,7 @@
 
 Build script and setup notes for installing **OpenCV 4.13.0** with CUDA, cuDNN, GStreamer, and the contrib modules on **NVIDIA Jetson AGX Orin** running **JetPack 6.x** (L4T R36 / Ubuntu 22.04).
 
-> _Last updated: 2026-05-18_
+> _Last updated: 2026-05-19_
 
 ---
 
@@ -68,7 +68,36 @@ Available modes on the AGX Orin Devkit:
 
 ---
 
-### 4. Install `jtop`
+### 4. Configure swap (NVMe, 64 GB)
+
+JetPack defaults to ~30 GB of zram (RAM-compressed) swap, which is poor for sustained ML / long C++ builds — it trades memory pressure for CPU pressure. Replace it with a real swapfile on the NVMe:
+
+```bash
+# Stop nvzramconfig from re-creating zram swap on next boot
+sudo systemctl disable nvzramconfig
+
+# Turn off current (zram) swap
+sudo swapoff -a
+
+# Create a 64 GB swapfile on the NVMe-backed root filesystem
+sudo fallocate -l 64G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# Persist across reboots
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+# Verify
+swapon --show     # should show /swapfile, 64G, on /dev/nvme0n1
+free -h
+```
+
+> **If `swapon` reports** *"appears to have holes"* (rare on ext4 + modern kernel), `rm /swapfile` and re-create with `sudo dd if=/dev/zero of=/swapfile bs=1M count=65536 status=progress` instead of `fallocate`.
+
+---
+
+### 5. Install `jtop`
 
 Ubuntu 22.04 enforces PEP 668, so `--break-system-packages` is required:
 
@@ -82,7 +111,7 @@ Launch with `jtop`.
 
 ---
 
-### 5. Build OpenCV with CUDA
+### 6. Build OpenCV with CUDA
 
 ```bash
 git clone https://github.com/bluevisor/OpenCV_4.13.0_with_cuda_on_Jetson_AGX_Orin.git
@@ -95,7 +124,7 @@ chmod +x install_OpenCV_4.13.0_with_cuda_on_Jetpack_6.sh
 
 ---
 
-### 6. Verify the install
+### 7. Verify the install
 
 ```bash
 python3 -c "import cv2; print(cv2.__version__, cv2.cuda.getCudaEnabledDeviceCount())"
@@ -109,7 +138,7 @@ Expected output:
 
 ---
 
-### 7. TensorRT _(optional)_
+### 8. TensorRT _(optional)_
 
 TensorRT 10 ships pre-installed with JetPack 6. For Python and dev headers:
 
@@ -119,7 +148,7 @@ sudo apt-get install -y python3-libnvinfer-dev
 
 ---
 
-### 8. PyTorch _(optional)_
+### 9. PyTorch _(optional)_
 
 Use the [NVIDIA Jetson AI Lab pip index](https://pypi.jetson-ai-lab.io/) — PyPI's extra-index serves broken SBSA wheels on Jetson.
 
