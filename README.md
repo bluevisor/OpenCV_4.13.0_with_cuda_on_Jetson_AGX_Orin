@@ -34,7 +34,7 @@ To enter **Force Recovery** mode on the AGX Orin Devkit:
 2. Tap **Reset**
 3. Release **Force Recovery**
 
-Connect the device to the host via USB-C.
+Connect the device to the host with a USB-C cable. The AGX Orin Devkit has **two USB-C ports** — for flashing you must use the one **next to the 40-pin GPIO header** (the "Device" / OTG port). The other USB-C port (next to the 10GbE jack) is a regular USB 3.2 Type-C and will *not* work for SDK Manager.
 
 ---
 
@@ -51,9 +51,20 @@ sudo apt update && sudo apt install -y nvidia-jetpack
 ### 3. Set max performance
 
 ```bash
-sudo nvpmodel -m 0      # MAXN (MAXN_SUPER also available on JetPack 6.2)
+sudo nvpmodel -m 3      # 50W mode (recommended)
 sudo jetson_clocks
 ```
+
+Available modes on the AGX Orin Devkit:
+
+| ID | Mode    |
+|----|---------|
+| 0  | MAXN    |
+| 1  | 15W     |
+| 2  | 30W     |
+| 3  | 50W     |
+
+> **Heads up:** `nvpmodel -m 0` (MAXN) frequently triggers `System throttled due to Over-current` under heavy CPU+GPU load — especially if you're not using the 90W barrel-jack adapter that ships with the Devkit. **Use mode 3 (50W) as the safe default**, and only switch to MAXN if you've verified your PSU and cooling can sustain it.
 
 ---
 
@@ -127,7 +138,15 @@ See also the [PyTorch for Jetson forum thread](https://forums.developer.nvidia.c
 | TX2                            | `6.2` |
 | Nano                           | `5.3` |
 
-**Environment.** The script appends `LD_LIBRARY_PATH` and `PYTHONPATH` to `~/.bashrc` (guarded against duplicates). Open a new shell or `source ~/.bashrc` after install.
+**Environment.** The script auto-detects your login shell (`$SHELL`) and appends `LD_LIBRARY_PATH` and `PYTHONPATH` to the right rc file (guarded against duplicates):
+
+| Shell | File written |
+|-------|--------------|
+| bash  | `~/.bashrc` |
+| zsh   | `~/.zshrc` |
+| fish  | `~/.config/fish/config.fish` (fish-style `set -gx`) |
+
+Open a new shell or `source` that file after install.
 
 **Disabling DNN-on-GPU.** Remove `-D OPENCV_DNN_CUDA=ON` from the script's `cmake` invocation if you don't need the CUDA DNN backend (slightly faster build).
 

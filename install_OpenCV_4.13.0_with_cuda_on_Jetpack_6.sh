@@ -95,13 +95,38 @@ echo "------------------------------------"
 sudo make install
 sudo ldconfig
 
-ld_line='export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH'
-py_line='export PYTHONPATH=/usr/local/lib/python3.10/dist-packages/:$PYTHONPATH'
-grep -qxF "$ld_line" ~/.bashrc || echo "$ld_line" >> ~/.bashrc
-grep -qxF "$py_line" ~/.bashrc || echo "$py_line" >> ~/.bashrc
+# Append env-var exports to the user's login-shell rc file (bash, zsh, or fish).
+shell_name=$(basename "${SHELL:-/bin/bash}")
+case "$shell_name" in
+    fish)
+        rc_file="$HOME/.config/fish/config.fish"
+        mkdir -p "$(dirname "$rc_file")"
+        touch "$rc_file"
+        ld_line='set -gx LD_LIBRARY_PATH /usr/local/lib $LD_LIBRARY_PATH'
+        py_line='set -gx PYTHONPATH /usr/local/lib/python3.10/dist-packages/ $PYTHONPATH'
+        reload_cmd="source $rc_file"
+        ;;
+    zsh)
+        rc_file="$HOME/.zshrc"
+        touch "$rc_file"
+        ld_line='export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH'
+        py_line='export PYTHONPATH=/usr/local/lib/python3.10/dist-packages/:$PYTHONPATH'
+        reload_cmd="source $rc_file"
+        ;;
+    *)
+        rc_file="$HOME/.bashrc"
+        ld_line='export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH'
+        py_line='export PYTHONPATH=/usr/local/lib/python3.10/dist-packages/:$PYTHONPATH'
+        reload_cmd="source $rc_file"
+        ;;
+esac
+
+grep -qxF "$ld_line" "$rc_file" || echo "$ld_line" >> "$rc_file"
+grep -qxF "$py_line" "$rc_file" || echo "$py_line" >> "$rc_file"
 
 
 echo "** Install opencv "${version}" successfully"
-echo "** Open a new shell or run 'source ~/.bashrc' to pick up the new env vars."
+echo "** Detected shell: $shell_name -> wrote env vars to $rc_file"
+echo "** Open a new shell or run '$reload_cmd' to pick them up."
 echo "** Verify with: python3 -c 'import cv2; print(cv2.__version__, cv2.cuda.getCudaEnabledDeviceCount())'"
 echo "** Bye :)"
