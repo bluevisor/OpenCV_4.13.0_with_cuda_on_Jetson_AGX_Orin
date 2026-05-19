@@ -96,6 +96,8 @@ cmake \
     -D OPENCV_GENERATE_PKGCONFIG=ON \
     -D OPENCV_ENABLE_NONFREE=ON \
     -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${version}/modules \
+    -D GLOG_INCLUDE_DIR=/usr/include \
+    -D GFLAGS_INCLUDE_DIR=/usr/include \
     -D WITH_GSTREAMER=ON \
     -D WITH_LIBV4L=ON \
     -D WITH_OPENGL=ON \
