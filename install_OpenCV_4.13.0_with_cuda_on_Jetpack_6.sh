@@ -15,6 +15,16 @@ folder="workspace"
 
 set -e
 
+# Fail fast if a prior 'sudo ./install...' left a root-owned workspace/ behind.
+if [ -e "$folder" ] && [ ! -w "$folder" ]; then
+    owner=$(stat -c '%U:%G' "$folder" 2>/dev/null || echo 'unknown')
+    echo "** ERROR: '$folder' exists but is not writable by $USER (owned by $owner)."
+    echo "**        This usually means a previous run used 'sudo ./install...'."
+    echo "** Fix:   sudo rm -rf $folder            # discard old build tree, OR"
+    echo "**        sudo chown -R \"\$USER:\$USER\" $folder   # keep it"
+    exit 1
+fi
+
 for (( ; ; ))
 do
     echo "Do you want to remove the default OpenCV (yes/no)?"
