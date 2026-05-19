@@ -51,6 +51,7 @@ sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
 sudo apt-get install -y libtbb-dev libjpeg-dev libpng-dev libtiff-dev
 sudo apt-get install -y libv4l-dev v4l-utils qv4l2
 sudo apt-get install -y libopenblas-dev liblapacke-dev   # BLAS + LAPACK(E) for cv::gemm fast path
+sudo apt-get install -y libeigen3-dev                    # enables alphamat, rgbd posegraph, parts of sfm
 sudo apt-get install -y curl
 
 
@@ -80,6 +81,8 @@ cmake \
     -D WITH_CUDNN=ON \
     -D WITH_CUBLAS=ON \
     -D OPENCV_DNN_CUDA=ON \
+    -D WITH_NVCUVID=OFF \
+    -D WITH_NVCUVENC=OFF \
     -D CUDA_ARCH_BIN="8.7" \
     -D CUDA_ARCH_PTX="" \
     -D ENABLE_FAST_MATH=ON \
