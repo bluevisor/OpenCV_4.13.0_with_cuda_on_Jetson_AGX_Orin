@@ -53,6 +53,9 @@ sudo apt-get install -y libv4l-dev v4l-utils qv4l2
 sudo apt-get install -y libopenblas-dev liblapacke-dev   # BLAS + LAPACK(E) for cv::gemm fast path
 sudo apt-get install -y libeigen3-dev                    # enables alphamat, rgbd posegraph, parts of sfm
 sudo apt-get install -y libvtk9-dev                      # enables the viz module (3D visualization)
+sudo apt-get install -y libhdf5-dev                      # enables the hdf module (HDF5 matrix I/O)
+sudo apt-get install -y libtesseract-dev libleptonica-dev # enables OCR in the text module
+sudo apt-get install -y libgflags-dev libgoogle-glog-dev # with Eigen, enables full sfm module
 sudo apt-get install -y curl
 
 
