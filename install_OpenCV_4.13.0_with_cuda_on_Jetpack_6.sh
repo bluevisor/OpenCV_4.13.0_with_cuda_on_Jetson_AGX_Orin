@@ -75,7 +75,12 @@ cd opencv-${version}/
 echo "------------------------------------"
 echo "** Build opencv "${version}" (3/4)"
 echo "------------------------------------"
-rm -rf release && mkdir release
+if [ -d release ] && ! rm -rf release 2>/dev/null; then
+    echo "** ERROR: cannot remove 'release/' — it contains files owned by another user."
+    echo "** Fix:   sudo rm -rf release    (or chown to \$USER first)"
+    exit 1
+fi
+mkdir release
 cd release/
 # CUDA_ARCH_BIN: Orin, Orin NX, Orin Nano: 8.7; Xavier, Xavier NX: 7.2; TX2: 6.2; Nano: 5.3
 cmake \
