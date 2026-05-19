@@ -15,8 +15,10 @@ Build script and setup notes for installing **OpenCV 4.13.0** with CUDA, cuDNN, 
 | CUDA      | 12.6 (bundled with JetPack 6.2) |
 | cuDNN     | 9.x |
 | Python    | 3.10 |
-| Disk      | ~12 GB free + swap |
+| Disk      | ~12 GB free + swap (**NVMe SSD highly recommended** — see below) |
 | Build time | ~2–3 h with `make -j$(nproc)` on AGX Orin |
+
+> **Tip:** Install the OS — or at least move `/home` and the build directory — to an **NVMe SSD**. Building OpenCV on the stock eMMC / SD card is painfully slow (many thousands of small I/Os) and can wear the flash. The AGX Orin Devkit has an M.2 Key M slot; flashing rootfs to NVMe via SDK Manager is the cleanest setup.
 
 ---
 
