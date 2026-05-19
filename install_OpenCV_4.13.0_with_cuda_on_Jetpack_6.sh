@@ -50,6 +50,7 @@ sudo apt-get install -y build-essential cmake git libgtk2.0-dev pkg-config libav
 sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
 sudo apt-get install -y libtbb-dev libjpeg-dev libpng-dev libtiff-dev
 sudo apt-get install -y libv4l-dev v4l-utils qv4l2
+sudo apt-get install -y libopenblas-dev liblapacke-dev   # BLAS + LAPACK(E) for cv::gemm fast path
 sudo apt-get install -y curl
 
 
