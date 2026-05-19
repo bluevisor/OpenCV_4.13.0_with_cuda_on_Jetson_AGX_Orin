@@ -9,9 +9,8 @@
 # license agreement from NVIDIA Corporation is strictly prohibited.
 #
 # Modified from this script: https://github.com/AastaNV/JEP/blob/master/script/install_opencv4.6.0_Jetson.sh
-# Do not use U.S. mirror as your APT source, it has missing files.
 
-version="4.10.0"
+version="4.13.0"
 folder="workspace"
 
 set -e

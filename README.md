@@ -17,18 +17,16 @@ Prerequisites: ~12 GB free disk + swap on the target. Build takes ~2-3 h on AGX 
 `sudo pip3 install -U jetson-stats --break-system-packages`
 
 5, Install OpenCV with CUDA: clone this repo, then
-`chmod +x install_OpenCV_4.10.0_with_cuda_on_Jetpack_6.sh`,
-`./install_OpenCV_4.10.0_with_cuda_on_Jetpack_6.sh`
+`chmod +x install_OpenCV_4.13.0_with_cuda_on_Jetpack_6.sh`,
+`./install_OpenCV_4.13.0_with_cuda_on_Jetpack_6.sh`
 (the script uses `sudo` internally — do not run the whole script with sudo or `~/.bashrc` will be modified for root).
 
 6, Verify the install:
 `python3 -c "import cv2; print(cv2.__version__, cv2.cuda.getCudaEnabledDeviceCount())"`
-Expected: `4.10.0 1`
+Expected: `4.13.0 1`
 
 7, TensorRT: ships pre-installed with JetPack 6. For the Python/dev bindings:
 `sudo apt-get install -y python3-libnvinfer-dev`
 
 8, Install PyTorch — use the NVIDIA Jetson AI Lab pip index (preferred over PyPI extra-index, which serves broken SBSA wheels):
 see https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048 or the JetPack-AI-Lab index documented at https://pypi.jetson-ai-lab.io/
-
-p.s. *Do not use the U.S. apt mirror — missing files cause build/install failures.*
