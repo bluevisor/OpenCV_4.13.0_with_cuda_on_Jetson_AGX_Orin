@@ -77,6 +77,8 @@ cd release/
 cmake \
     -D CMAKE_BUILD_TYPE=RELEASE \
     -D CMAKE_INSTALL_PREFIX=/usr/local \
+    -D CMAKE_CXX_STANDARD=17 \
+    -D CMAKE_CUDA_STANDARD=17 \
     -D WITH_CUDA=ON \
     -D WITH_CUDNN=ON \
     -D WITH_CUBLAS=ON \
